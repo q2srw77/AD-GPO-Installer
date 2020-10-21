@@ -8,9 +8,16 @@
 
 #Define the SophosSetup.exe Installer Location
 #
-#SophosSetup.exe needs to be downloaded from the Sophos Central Admin Dashboard
+#SophosSetup.exe needs to be downloaded from the Sophos Central Admin Dashboard, not the partner dashboard
+#
+#Example Usage:
+# $InstallerLocation = "\\server\share\SophosSetup.exe"
+# $MessageRelayHost = "server.domain.local:8190"
+#Or
+# $MessageRelayHost = "192.168.0.1:8190"
 
-$InstallerLocation = "\\server\share\SophosSetup.exe"
+$InstallerLocation = ""
+$MessageRelayHost = ""
 
 # Define Functions
 
@@ -44,12 +51,24 @@ else {
 Write-Host ""
 Write-Host "Checking for SophosSetup.exe"
 
-if !(Test-Path $InstallerLocation -PathType leaf)
-	{Write-Host "--SophosSetup.exe Missing or Path is incorrect"
-    Stop-Transcript
-	Exit 1}
-else
-	{Write-Host "--InstallerLocation = "$InstallerLocation""}
+if !(Test-Path $InstallerLocation -PathType leaf) {
+	Write-Host "--SophosSetup.exe Missing or Path is incorrect"
+	Stop-Transcript
+	Exit 1
+	}
+else {
+	Write-Host "--InstallerLocation = "$InstallerLocation""
+	}
+
+# Check message host was filled in by end user
+if ($MessageRelayHost -eq "") {
+	Write-Host "No MessageRelay Set, continuing"}
+	}
+else {
+	Write-Host "--messagerelays = "$MessageRelayHost""
+	arguments = "--messagerelays="$MessageRelayHost""
+	}
+
 
 # Check to see if a previous SophosSetup Process is running
 Write-Host ""
@@ -62,8 +81,6 @@ else {
     Stop-Process -processname "sophossetup"
  }
 
-#Force PowerShell to use TLS 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # This Section starts the installer using the arguments defined above
 Write-Host ""
@@ -72,7 +89,13 @@ Write-Host ""
 Write-Host "From: "$InstallerLocation""
 Write-Host ""
 
-start-process $InstallerLocation --quiet
+if !($MessageRelayHost -eq "") {
+	Write-Host "Relay: "$MessageRelayHost""
+	Write-Host ""
+	}
+
+
+start-process $InstallerLocation --quiet $arguments
 
 $timeout = new-timespan -Minutes 30
 $install = [diagnostics.stopwatch]::StartNew()
