@@ -13,6 +13,8 @@
 # Example Usage
 # $InstallerLocation = "\\server\share\SophosSetup.exe"
 # $InstallerArguments = "--messagerelay="192.168.0.1:8190""
+#
+#Command Line Options can be found here - https://support.sophos.com/support/s/article/KB-000036839
 
 $InstallerLocation = ""
 $InstallerArguments = ""
