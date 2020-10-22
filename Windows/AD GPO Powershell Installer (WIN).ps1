@@ -8,9 +8,14 @@
 
 #Define the SophosSetup.exe Installer Location
 #
-#SophosSetup.exe needs to be downloaded from the Sophos Central Admin Dashboard
+#SophosSetup.exe needs to be downloaded from the Sophos Central Admin Dashboard, not the partner centre
+#
+# Example Usage
+# $InstallerLocation = "\\server\share\SophosSetup.exe"
+# $InstallerArguments = "--messagerelay="192.168.0.1:8190""
 
-$InstallerLocation = "\\server\share\SophosSetup.exe"
+$InstallerLocation = ""
+$InstallerArguments = ""
 
 # Define Functions
 
@@ -44,12 +49,15 @@ else {
 Write-Host ""
 Write-Host "Checking for SophosSetup.exe"
 
-if !(Test-Path $InstallerLocation -PathType leaf)
-	{Write-Host "--SophosSetup.exe Missing or Path is incorrect"
-    Stop-Transcript
-	Exit 1}
-else
-	{Write-Host "--InstallerLocation = "$InstallerLocation""}
+if (!(Test-Path $InstallerLocation -PathType leaf)) {
+	Write-Host "--SophosSetup.exe Missing or Path is incorrect"
+	Stop-Transcript
+	Exit 1
+	}
+else {
+	Write-Host "--InstallerLocation = "$InstallerLocation""
+	Write-Host ""$InstallerArguments""
+	}
 
 # Check to see if a previous SophosSetup Process is running
 Write-Host ""
@@ -62,17 +70,15 @@ else {
     Stop-Process -processname "sophossetup"
  }
 
-#Force PowerShell to use TLS 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
 # This Section starts the installer using the arguments defined above
 Write-Host ""
 Write-Host "Installing Sophos Central Endpoint:"
 Write-Host ""
 Write-Host "From: "$InstallerLocation""
 Write-Host ""
+Write-Host "With extra options: "$InstallerArguments""
 
-start-process $InstallerLocation --quiet
+start-process $InstallerLocation --quiet $InstallerArguments
 
 $timeout = new-timespan -Minutes 30
 $install = [diagnostics.stopwatch]::StartNew()
