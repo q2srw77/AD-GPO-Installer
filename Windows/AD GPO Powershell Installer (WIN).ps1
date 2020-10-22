@@ -62,7 +62,7 @@ else {
 
 # Check message host was filled in by end user
 if ($MessageRelayHost -eq "") {
-	Write-Host "No MessageRelay Set, continuing"}
+	Write-Host "No MessageRelay Set, continuing"
 	}
 else {
 	Write-Host "--messagerelays = "$MessageRelayHost""
