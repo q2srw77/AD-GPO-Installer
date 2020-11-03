@@ -80,7 +80,12 @@ Write-Host "From: "$InstallerLocation""
 Write-Host ""
 Write-Host "With extra options: "$InstallerArguments""
 
-start-process $InstallerLocation --quiet $InstallerArguments
+if ($InstallerArguments -eq "") {
+	start-process $InstallerLocation --quiet
+}
+else {
+	start-process $InstallerLocation --quiet $InstallerArguments
+}
 
 $timeout = new-timespan -Minutes 30
 $install = [diagnostics.stopwatch]::StartNew()
