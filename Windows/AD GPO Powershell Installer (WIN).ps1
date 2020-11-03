@@ -29,7 +29,7 @@ $Global:mcsagent = Get-Service -name "Sophos MCS Agent" -ea SilentlyContinue
 }
 
 # Sophos Central Installation
-Start-Transcript c:\temp\SophosCentralInstallLog.txt
+Start-Transcript $env:systemdrive\temp\SophosCentralInstallLog.txt
 Write-Host "Starting the Sophos Central Installation based on the variables defined in the site"
 Write-Host ""
 Write-Host "Checking to see if Sophos is Already Installed"
